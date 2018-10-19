@@ -1,6 +1,6 @@
 CONFIG_MODULE_SIG=n
 
-obj-m := hmm_context.o
+obj-m := hmm_socket.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

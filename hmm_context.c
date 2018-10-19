@@ -1,13 +1,13 @@
 #include "hmm_context.h"
 
-static struct task_struct *context_handler_thread;
-static struct hmm_context *ctx;
+static struct task_struct *context_handler_thread=NULL;
+static struct hmm_context *ctx=NULL;
 
 static int hmm_context_run(void *data)
 {
-	struct hmm_context *ctx=(struct hmm_context*)data;
+	struct hmm_context *ctx_tmp=(struct hmm_context*)data;
 
-	while(1){
+	while(!kthread_should_stop()){
 		pr_info("run context handler.\n");
 		msleep(2000);
 	}
@@ -29,6 +29,7 @@ static int hmm_context_init(void)
 		goto out_release_ctx;
 	}
 	return 0;
+	
 out_release_ctx:
 	kfree(ctx);
 out:
@@ -37,7 +38,7 @@ out:
 
 static void hmm_context_cleanup(void)
 {
-	if(!IS_ERR(context_handler_thread))
+	if(context_handler_thread)
 		kthread_stop(context_handler_thread);
 	
 	if(ctx)
